@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jarvis Voice Assistant</title>
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <h1>Jarvis Control Panel</h1>
+    <button onclick="startJarvis()">Start Jarvis</button>
+    <button onclick="playJarvisResponse()">Play Response</button>
+    <audio id="jarvisAudio" controls></audio>
+
+    <script>
+    function startJarvis() {
+        fetch('/start-jarvis')
+        .then(response => response.text())
+        .then(data => alert(data))
+        .catch(error => console.log(error));
+    }
+
+    function playJarvisResponse() {
+        fetch('/get-response')
+        .then(response => {
+            if (!response.ok) throw new Error('No response available');
+            return response.blob();
+        })
+        .then(blob => {
+            const url = URL.createObjectURL(blob);
+            const audio = document.getElementById('jarvisAudio');
+            audio.src = url;
+            audio.play();
+        })
+        .catch(error => console.log(error));
+    }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+ 
+ 
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jarvis</title>
+</head>
+<body>
+    <h1>Welcome to Jarvis</h1>
+    <button onclick="startRecognition()">Start Voice Command</button>
+    <script>
+        function startRecognition() {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            recognition.onresult = function(event) {
+                const command = event.results[0][0].transcript;
+                fetch('/process-command', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ command: command })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.message);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            };
+
+            recognition.onerror = function(event) {
+                console.error('Error occurred in recognition: ' + event.error);
+            };
+
+            recognition.start();
+        }
+    </script>
+</body>
+</html> -->
